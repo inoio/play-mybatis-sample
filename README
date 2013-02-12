@@ -1,4 +1,6 @@
-This is your new Play 2.1 application
+How to Integrate MyBatis With Play Framework 2.1 (and Guice)
 =====================================
 
-This file will be packaged with your application, when using `play dist`.
+This is the source code for the blog post [How to Integrate MyBatis With Play Framework 2.1 (and Guice)](http://inoio.de/blog/2013/02/07/integrating-mybatis-guice-play2/).
+
+The branch `mybatis-xml-config` contains the integration of mybatis-config.xml as shown in one of the comments.
