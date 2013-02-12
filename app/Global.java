@@ -1,18 +1,13 @@
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.mybatis.guice.MyBatisModule;
+import org.mybatis.guice.XMLMyBatisModule;
 
 import play.Application;
+import play.Configuration;
 import play.GlobalSettings;
-import play.db.DB;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
 
 public class Global extends GlobalSettings {
 
@@ -20,21 +15,17 @@ public class Global extends GlobalSettings {
 
   @Override
   public void onStart(Application app) {
-    injector = Guice.createInjector(new MyBatisModule() {
+    final Properties props = new Properties();
+    final Configuration config = app.configuration();
+    props.setProperty("driver", config.getString("db.default.driver"));
+    props.setProperty("url", config.getString("db.default.url"));
+    props.setProperty("username", config.getString("db.default.user"));
+    props.setProperty("password", config.getString("db.default.password"));
+    injector = Guice.createInjector(new XMLMyBatisModule() {
       @Override
       protected void initialize() {
-        bindDataSourceProvider(new Provider<DataSource>() {
-          @Override
-          public DataSource get() {
-            // use db as configured in conf/application.conf
-            return DB.getDataSource();
-          }
-        });
-        bindTransactionFactoryType(JdbcTransactionFactory.class);
-
-        final Properties myBatisProperties = new Properties();
-        myBatisProperties.setProperty("mybatis.environment.id", "default");
-        Names.bindProperties(binder(), myBatisProperties);
+        setEnvironmentId("default");
+        addProperties(props);
       }
     });
   }
